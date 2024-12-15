@@ -10,14 +10,47 @@ class Validator:
 
     def validate_cpf(self, cpf_str):
         cpf = self.__clean(cpf_str)
-        if len(cpf) != 11:
+        if len(cpf) != 11 or cpf == cpf[0] * 11:
             return False
+
+        numbers = [int(digit) for digit in cpf]
+
+
+        sum_first = sum(num * i for num, i in zip(numbers[:9], range(10, 1, -1)))
+        first_verifier = 11 - (sum_first % 11)
+        first_verifier = first_verifier if first_verifier < 10 else 0
+        if first_verifier != numbers[9]:
+            return False
+
+        sum_second = sum(num * i for num, i in zip(numbers[:10], range(11, 1, -1)))
+        second_verifier = 11 - (sum_second % 11)
+        second_verifier = second_verifier if second_verifier < 10 else 0
+        if second_verifier != numbers[10]:
+            return False
+
         return True
 
     def validate_cnpj(self, cnpj_str):
         cnpj = self.__clean(cnpj_str)
-        if len(cnpj) != 14:
+        if len(cnpj) != 14 or cnpj == cnpj[0] * 14:
             return False
+        
+        weights_first = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        weights_second = [6] + weights_first
+        numbers = [int(digit) for digit in cnpj]
+
+        sum_first = sum(num * weight for num, weight in zip(numbers[:12], weights_first))
+        first_verifier = 11 - (sum_first % 11)
+        first_verifier = first_verifier if first_verifier < 10 else 0
+        if first_verifier != numbers[12]:
+            return False
+
+        sum_second = sum(num * weight for num, weight in zip(numbers[:13], weights_second))
+        second_verifier = 11 - (sum_second % 11)
+        second_verifier = second_verifier if second_verifier < 10 else 0
+        if second_verifier != numbers[13]:
+            return False
+
         return True
 
     def validate_doc(self, cpf_cnpj):
@@ -111,9 +144,23 @@ class MainService:
         return message
 
 if __name__ == "__main__":
-    service = MainService()
+    validator = Validator()
+    cpfs = ["123.456.789-09", "111.444.777-35", "000.000.000-00", "111.111.111-11"]
+    for cpf in cpfs:
+        if validator.validate_cpf(cpf):
+            print("{}: ok".format(cpf))
+        else:
+            print("{}: not ok".format(cpf))
 
-    t1 = {"cpf_cnpj": "075.210.019-07", "name": "Alqua Ayala"}
-    print(service.insert_single(t1))
-    t2 = {"cpf_cnpj": "30.607.887/0001-41321", "name": "Alphadale Curtis"}
-    print(service.insert_single(t2))
+    print("\n")
+    cnpjs = [
+        "11.444.777/0001-61",
+        "12.345.678/9012-34",
+        "00.000.000/0000-00",
+        "11.111.111/1111-11",
+        ]
+    for cnpj in cnpjs:
+        if validator.validate_cnpj(cnpj):
+            print("{}: ok".format(cnpj))
+        else:
+            print("{}: not ok".format(cnpj))
