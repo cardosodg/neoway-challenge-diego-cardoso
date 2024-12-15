@@ -59,7 +59,7 @@ class Validator:
 
 class MainService:
     def __init__(self):
-        uri = "mongodb://localhost:27017/"
+        uri = "mongodb://mongodb:27017/"
         db_name = "neoway"
         collection_name = "clients"
         unique_index = "cpf_cnpj"
