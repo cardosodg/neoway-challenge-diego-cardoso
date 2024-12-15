@@ -1,0 +1,16 @@
+curl -X POST http://127.0.0.1:5000/insert \
+-H "Content-Type: application/json" \
+-d '{"cpf_cnpj": "30.607.887/0001-41", "name": "Alphadale Curtis"}'
+
+curl -X POST http://127.0.0.1:5000/load-file \
+-H "Content-Type: multipart/form-data" \
+-F "file=@projects/neoway_challenge/app/test/data/Base_Dados_Teste.csv"
+
+curl "http://127.0.0.1:5000/search?"
+curl "http://127.0.0.1:5000/search"
+
+curl "http://127.0.0.1:5000/search?cpf_cnpj=12345678901"
+curl "http://127.0.0.1:5000/search?name=John+Doe"
+curl "http://127.0.0.1:5000/search?cpf_cnpj=12345678901&name=John+Doe"
+
+curl "http://127.0.0.1:5000/status"
